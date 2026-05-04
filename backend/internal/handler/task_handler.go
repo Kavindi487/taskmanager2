@@ -16,8 +16,20 @@ func NewTaskHandler(s *service.TaskService) *TaskHandler {
 
 func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
     title := r.FormValue("title")
+    userIDStr := r.FormValue("user")   // read from request
 
-    err := h.service.CreateTask(title, 1)
+    if title == "" {
+        http.Error(w, "title is required", 400)
+        return
+    }
+
+    userID, err := strconv.Atoi(userIDStr)
+    if err != nil || userID < 1 {
+        http.Error(w, "valid user id is required", 400)
+        return
+    }
+
+    err = h.service.CreateTask(title, userID)
     if err != nil {
         http.Error(w, err.Error(), 400)
         return

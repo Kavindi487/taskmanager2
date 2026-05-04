@@ -1,0 +1,27 @@
+<div class="task-container">
+  <h2>My Tasks</h2>
+
+  <!-- two-way binding: links input to newTitle variable -->
+  <input [(ngModel)]="newTitle"
+         placeholder="New task title..." />
+  <button (click)="addTask()">Add</button>
+
+  <!-- @for loop — Angular 17+ control flow syntax -->
+  @for (task of tasks; track task.id) {
+    <div class="task-item">
+      <span [class.done]="task.done">
+        {{ task.title }}          <!-- interpolation -->
+      </span>
+
+      @if (!task.done) {          <!-- conditional rendering -->
+        <button (click)="complete(task)">
+          Done
+        </button>
+      }
+    </div>
+  }
+
+  @if (tasks.length === 0) {
+    <p>No tasks yet. Add one above!</p>
+  }
+</div>

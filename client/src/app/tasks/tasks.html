@@ -1,12 +1,13 @@
 <div class="page">
   <div class="container">
 
+    <!-- Header -->
     <div class="header">
       <div class="header-left">
         <h1>My Tasks</h1>
         <p class="subtitle">
           @if (selectedUserId) {
-            client/src/app/tasks/tasks.html
+            {{ getSelectedUserName() }} &nbsp;·&nbsp; Task Manager
           } @else {
             Select a user to begin
           }
@@ -20,9 +21,9 @@
       }
     </div>
 
-    <!-- User selector -->
+    <!-- User Selector -->
     <div class="user-selector">
-      <div class="section-label" style="margin-bottom: 10px;">Select user</div>
+      <div class="section-label">Select user</div>
       <div class="user-chips">
         @for (user of users; track user.ID) {
           <button
@@ -40,7 +41,7 @@
       </div>
     </div>
 
-    <!-- Add Task Form — only show if a user is selected -->
+    <!-- Add Task + Task List — only when a user is selected -->
     @if (selectedUserId) {
       <div class="add-form">
         <input

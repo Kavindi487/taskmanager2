@@ -2,10 +2,9 @@ package repository
 
 import (
     "errors"
+    "sync"
     "taskmanager/internal/model"
 )
-
-import "sync"
 
 type InMemoryUserRepo struct {
     mu     sync.RWMutex
@@ -21,6 +20,8 @@ func NewInMemoryUserRepo() *InMemoryUserRepo {
 }
 
 func (r *InMemoryUserRepo) Create(user *model.User) error {
+    r.mu.Lock()
+    defer r.mu.Unlock()
     user.ID = r.nextID
     r.users[user.ID] = user
     r.nextID++

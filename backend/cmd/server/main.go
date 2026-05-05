@@ -30,7 +30,15 @@ func main() {
     userHandler := handler.NewUserHandler(userService)
     taskHandler := handler.NewTaskHandler(taskService)
 
-    http.HandleFunc("/users", userHandler.CreateUser)
+    http.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
+        switch r.Method {
+        case http.MethodGet:
+            userHandler.GetUsers(w, r)
+        case http.MethodPost:
+            userHandler.CreateUser(w, r)
+        }
+    })
+
     http.HandleFunc("/tasks", func(w http.ResponseWriter, r *http.Request) {
         switch r.Method {
         case http.MethodGet:
@@ -39,15 +47,8 @@ func main() {
             taskHandler.CreateTask(w, r)
         }
     })
+
     http.HandleFunc("/tasks/done", taskHandler.MarkDone)
-    http.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
-    switch r.Method {
-    case http.MethodGet:
-        userHandler.GetUsers(w, r)
-    case http.MethodPost:
-        userHandler.CreateUser(w, r)
-    }
-})
 
     http.ListenAndServe(":8080", corsMiddleware(http.DefaultServeMux))
 }

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"taskmanager/internal/service"
@@ -40,27 +41,23 @@ func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 
 func (h *TaskHandler) GetTasks(w http.ResponseWriter, r *http.Request) {
     userIDStr := r.URL.Query().Get("user")
-
     if userIDStr == "" {
         http.Error(w, "user id required", 400)
         return
     }
-
     userID, err := strconv.Atoi(userIDStr)
     if err != nil {
         http.Error(w, "invalid user id", 400)
         return
     }
-
     tasks, err := h.service.GetTasksByUser(userID)
     if err != nil {
         http.Error(w, err.Error(), 400)
         return
     }
 
-    for _, t := range tasks {
-        w.Write([]byte(t.Title + "\n"))
-    }
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(tasks)
 }
 
 func (h *TaskHandler) MarkDone(w http.ResponseWriter, r *http.Request) {

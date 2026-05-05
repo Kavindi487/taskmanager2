@@ -1,3 +1,5 @@
+// tasks.ts — full corrected file
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,12 +15,10 @@ import { Task, TaskService } from '../task.service';
 export class TasksComponent implements OnInit {
   tasks: Task[] = [];
   newTitle = '';
-  userId = 1; // hardcoded for now
+  userId = 1;
 
-  // inject the service — Angular creates it for us
   constructor(private taskService: TaskService) {}
 
-  // runs once when component loads
   ngOnInit() {
     this.loadTasks();
   }
@@ -26,22 +26,22 @@ export class TasksComponent implements OnInit {
   loadTasks() {
     this.taskService
       .getTasks(this.userId)
-      .subscribe(tasks => this.tasks = tasks);
+      .subscribe(tasks => this.tasks = tasks ?? []);
   }
 
   addTask() {
     if (!this.newTitle.trim()) return;
     this.taskService
-      .createTask(this.newTitle)
+      .createTask(this.newTitle, this.userId)   // pass userId
       .subscribe(() => {
         this.newTitle = '';
-        this.loadTasks(); // refresh list
+        this.loadTasks();
       });
   }
 
   complete(task: Task) {
     this.taskService
-      .markDone(task.id)
-      .subscribe(() => task.done = true);
+      .markDone(task.ID)                        // use capital ID
+      .subscribe(() => task.Done = true);       // use capital Done
   }
 }

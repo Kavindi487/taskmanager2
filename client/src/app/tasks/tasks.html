@@ -1,22 +1,17 @@
+<!-- tasks.html — corrected -->
 <div class="task-container">
   <h2>My Tasks</h2>
 
-  <!-- two-way binding: links input to newTitle variable -->
-  <input [(ngModel)]="newTitle"
-         placeholder="New task title..." />
+  <input [(ngModel)]="newTitle" placeholder="New task title..." />
   <button (click)="addTask()">Add</button>
 
-  <!-- @for loop — Angular 17+ control flow syntax -->
-  @for (task of tasks; track task.id) {
+  @for (task of tasks; track task.ID) {
     <div class="task-item">
-      <span [class.done]="task.done">
-        {{ task.title }}          <!-- interpolation -->
+      <span [class.done]="task.Done">
+        {{ task.Title }}
       </span>
-
-      @if (!task.done) {          <!-- conditional rendering -->
-        <button (click)="complete(task)">
-          Done
-        </button>
+      @if (!task.Done) {
+        <button (click)="complete(task)">Done</button>
       }
     </div>
   }

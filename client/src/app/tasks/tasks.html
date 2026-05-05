@@ -1,22 +1,81 @@
-<!-- tasks.html — corrected -->
-<div class="task-container">
-  <h2>My Tasks</h2>
+<div class="page">
+  <div class="container">
 
-  <input [(ngModel)]="newTitle" placeholder="New task title..." />
-  <button (click)="addTask()">Add</button>
-
-  @for (task of tasks; track task.ID) {
-    <div class="task-item">
-      <span [class.done]="task.Done">
-        {{ task.Title }}
-      </span>
-      @if (!task.Done) {
-        <button (click)="complete(task)">Done</button>
+    <div class="header">
+      <div class="header-left">
+        <h1>My Tasks</h1>
+        <p class="subtitle">
+          @if (selectedUserId) {
+            client/src/app/tasks/tasks.html
+          } @else {
+            Select a user to begin
+          }
+        </p>
+      </div>
+      @if (selectedUserId) {
+        <div class="stats-pill">
+          <span class="dot"></span>
+          {{ tasks.length }} task{{ tasks.length !== 1 ? 's' : '' }}
+        </div>
       }
     </div>
-  }
 
-  @if (tasks.length === 0) {
-    <p>No tasks yet. Add one above!</p>
-  }
+    <!-- User selector -->
+    <div class="user-selector">
+      <div class="section-label" style="margin-bottom: 10px;">Select user</div>
+      <div class="user-chips">
+        @for (user of users; track user.ID) {
+          <button
+            class="user-chip"
+            [class.active]="selectedUserId === user.ID"
+            (click)="onUserSelect(user.ID)"
+          >
+            <span class="user-avatar">{{ user.Name[0].toUpperCase() }}</span>
+            {{ user.Name }}
+          </button>
+        }
+        @if (users.length === 0) {
+          <p class="no-users">No users yet — <a routerLink="/users">create one first</a></p>
+        }
+      </div>
+    </div>
+
+    <!-- Add Task Form — only show if a user is selected -->
+    @if (selectedUserId) {
+      <div class="add-form">
+        <input
+          [(ngModel)]="newTitle"
+          placeholder="What needs to be done?"
+          (keyup.enter)="addTask()"
+        />
+        <button (click)="addTask()">+ Add Task</button>
+      </div>
+
+      <div class="section-label">Active tasks</div>
+
+      <div class="task-list">
+        @if (tasks.length === 0) {
+          <div class="empty-state">
+            <div class="empty-icon">◎</div>
+            <p>No tasks yet. Add one above.</p>
+          </div>
+        }
+        @for (task of tasks; track task.ID) {
+          <div class="task-item" [class.done]="task.Done">
+            <div
+              class="check-circle"
+              [class.checked]="task.Done"
+              (click)="!task.Done && complete(task)"
+            ></div>
+            <span class="task-title">{{ task.Title }}</span>
+            <span class="task-id">#{{ task.ID }}</span>
+            @if (!task.Done) {
+              <button class="done-btn" (click)="complete(task)">Mark done</button>
+            }
+          </div>
+        }
+      </div>
+    }
+
+  </div>
 </div>

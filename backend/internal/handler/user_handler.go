@@ -1,8 +1,9 @@
 package handler
 
 import (
-    "net/http"
-    "taskmanager/internal/service"
+	"encoding/json"
+	"net/http"
+	"taskmanager/internal/service"
 )
 
 type UserHandler struct {
@@ -28,4 +29,10 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
     }
 
     w.Write([]byte("User created"))
+}
+
+func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+    users := h.service.GetAllUsers()
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(users)
 }

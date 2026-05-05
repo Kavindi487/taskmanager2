@@ -11,6 +11,11 @@ export interface Task {
   UserID: number;
 }
 
+export interface User {
+  ID: number;
+  Name: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TaskService {
   private base = 'http://localhost:8080';
@@ -21,6 +26,10 @@ export class TaskService {
     return this.http.get<Task[]>(`${this.base}/tasks`, {
       params: new HttpParams().set('user', userId)
     });
+  }
+
+  getUsers(): Observable<User[]> {
+  return this.http.get<User[]>(`${this.base}/users`);
   }
 
   createTask(title: string, userId: number): Observable<string> {

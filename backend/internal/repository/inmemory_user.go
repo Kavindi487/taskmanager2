@@ -5,8 +5,11 @@ import (
     "taskmanager/internal/model"
 )
 
+import "sync"
+
 type InMemoryUserRepo struct {
-    users map[int]*model.User
+    mu     sync.RWMutex
+    users  map[int]*model.User
     nextID int
 }
 
@@ -22,6 +25,16 @@ func (r *InMemoryUserRepo) Create(user *model.User) error {
     r.users[user.ID] = user
     r.nextID++
     return nil
+}
+
+func (r *InMemoryUserRepo) GetAll() []*model.User {
+    r.mu.RLock()
+    defer r.mu.RUnlock()
+    users := make([]*model.User, 0, len(r.users))
+    for _, u := range r.users {
+        users = append(users, u)
+    }
+    return users
 }
 
 func (r *InMemoryUserRepo) GetByID(id int) (*model.User, error) {

@@ -1,9 +1,7 @@
-// tasks.ts — full corrected file
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Task, TaskService } from '../task.service';
+import { Task, User, TaskService } from '../task.service';
 
 @Component({
   selector: 'app-tasks',
@@ -14,25 +12,34 @@ import { Task, TaskService } from '../task.service';
 })
 export class TasksComponent implements OnInit {
   tasks: Task[] = [];
+  users: User[] = [];
   newTitle = '';
-  userId = 1;
+  selectedUserId: number | null = null;  // no user selected by default
 
   constructor(private taskService: TaskService) {}
 
   ngOnInit() {
+    this.taskService.getUsers().subscribe(users => {
+      this.users = users ?? [];
+    });
+  }
+
+  onUserSelect(userId: number) {
+    this.selectedUserId = userId;
     this.loadTasks();
   }
 
   loadTasks() {
+    if (!this.selectedUserId) return;
     this.taskService
-      .getTasks(this.userId)
+      .getTasks(this.selectedUserId)
       .subscribe(tasks => this.tasks = tasks ?? []);
   }
 
   addTask() {
-    if (!this.newTitle.trim()) return;
+    if (!this.newTitle.trim() || !this.selectedUserId) return;
     this.taskService
-      .createTask(this.newTitle, this.userId)   // pass userId
+      .createTask(this.newTitle, this.selectedUserId)
       .subscribe(() => {
         this.newTitle = '';
         this.loadTasks();
@@ -41,7 +48,12 @@ export class TasksComponent implements OnInit {
 
   complete(task: Task) {
     this.taskService
-      .markDone(task.ID)                        // use capital ID
-      .subscribe(() => task.Done = true);       // use capital Done
+      .markDone(task.ID)
+      .subscribe(() => task.Done = true);
+  }
+
+  getSelectedUserName(): string {
+  const user = this.users.find(u => u.ID === this.selectedUserId);
+  return user ? user.Name : '';
   }
 }

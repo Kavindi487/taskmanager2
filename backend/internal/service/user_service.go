@@ -20,3 +20,7 @@ func (s *UserService) CreateUser(name string) error {
 
     return s.userRepo.Create(user)
 }
+
+func (s *UserService) GetAllUsers() []*model.User {
+    return s.userRepo.GetAll()
+}

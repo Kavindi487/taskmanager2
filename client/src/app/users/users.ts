@@ -12,6 +12,7 @@ import { FormsModule } from "@angular/forms";
 export class UsersComponent {
   userName = '';
   message = '';
+  isError = false;
 
   constructor(private http: HttpClient) {}
 
@@ -21,9 +22,16 @@ export class UsersComponent {
     this.http.post('http://localhost:8080/users', body.toString(), {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       responseType: 'text'
-    }).subscribe(res => {
-      this.message = res;       // "User created"
-      this.userName = '';
+    }).subscribe({
+      next: res => {
+        this.message = '✓ ' + res;
+        this.isError = false;
+        this.userName = '';
+      },
+      error: err => {
+        this.message = '✗ ' + (err.error || 'Something went wrong');
+        this.isError = true;
+      }
     });
   }
 }

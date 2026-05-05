@@ -1,4 +1,26 @@
-<h2>Create User</h2>
-<input [(ngModel)]="userName" placeholder="Enter name" />
-<button (click)="createUser()">Create</button>
-<p>{{ message }}</p>
+<div class="page">
+  <div class="container">
+
+    <div class="header">
+      <h1>New User</h1>
+      <p class="subtitle">Create a workspace account</p>
+    </div>
+
+    <div class="card">
+      <label class="field-label">Full name</label>
+      <input
+        [(ngModel)]="userName"
+        placeholder="e.g. Alice Johnson"
+        (keyup.enter)="createUser()"
+      />
+      <button class="submit-btn" (click)="createUser()">Create User →</button>
+
+      @if (message) {
+        <div class="message" [class.success]="!isError" [class.error]="isError">
+          {{ message }}
+        </div>
+      }
+    </div>
+
+  </div>
+</div>

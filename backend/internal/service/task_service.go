@@ -11,37 +11,30 @@ type TaskService struct {
 }
 
 func NewTaskService(t repository.TaskRepository, u repository.UserRepository) *TaskService {
-    return &TaskService{
-        taskRepo: t,
-        userRepo: u,
-    }
+    return &TaskService{taskRepo: t, userRepo: u}
 }
 
-func (s *TaskService) CreateTask(title string, userID int) error {
+func (s *TaskService) CreateTask(title string, userID string) error {
     _, err := s.userRepo.GetByID(userID)
     if err != nil {
         return err
     }
-
     task := &model.Task{
         Title:  title,
         Done:   false,
         UserID: userID,
     }
-
     return s.taskRepo.Create(task)
 }
 
-func (s *TaskService) GetTasksByUser(userID int) ([]model.Task, error) {
-    // optional: check if user exists
+func (s *TaskService) GetTasksByUser(userID string) ([]model.Task, error) {
     _, err := s.userRepo.GetByID(userID)
     if err != nil {
         return nil, err
     }
-
     return s.taskRepo.GetByUser(userID)
 }
 
-func (s *TaskService) MarkDone(taskID int) error {
+func (s *TaskService) MarkDone(taskID string) error {
     return s.taskRepo.MarkDone(taskID)
 }

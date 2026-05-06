@@ -8,13 +8,13 @@ import (
 
 type InMemoryUserRepo struct {
     mu     sync.RWMutex
-    users  map[int]*model.User
+    users  map[string]*model.User
     nextID int
 }
 
 func NewInMemoryUserRepo() *InMemoryUserRepo {
     return &InMemoryUserRepo{
-        users: make(map[int]*model.User),
+        users: make(map[string]*model.User),
         nextID: 1,
     }
 }
@@ -22,7 +22,6 @@ func NewInMemoryUserRepo() *InMemoryUserRepo {
 func (r *InMemoryUserRepo) Create(user *model.User) error {
     r.mu.Lock()
     defer r.mu.Unlock()
-    user.ID = r.nextID
     r.users[user.ID] = user
     r.nextID++
     return nil
@@ -38,7 +37,7 @@ func (r *InMemoryUserRepo) GetAll() []*model.User {
     return users
 }
 
-func (r *InMemoryUserRepo) GetByID(id int) (*model.User, error) {
+func (r *InMemoryUserRepo) GetByID(id string) (*model.User, error) {
     user, ok := r.users[id]
     if !ok {
         return nil, errors.New("user not found")

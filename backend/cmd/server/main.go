@@ -2,6 +2,7 @@ package main
 
 import (
     "net/http"
+    "taskmanager/internal/db"
     "taskmanager/internal/handler"
     "taskmanager/internal/repository"
     "taskmanager/internal/service"
@@ -21,8 +22,10 @@ func corsMiddleware(next http.Handler) http.Handler {
 }
 
 func main() {
-    userRepo := repository.NewInMemoryUserRepo()
-    taskRepo := repository.NewInMemoryTaskRepo()
+    db.Connect("mongodb://localhost:27017", "taskmanager")
+
+    userRepo := repository.NewMongoUserRepo()
+    taskRepo := repository.NewMongoTaskRepo()
 
     userService := service.NewUserService(userRepo)
     taskService := service.NewTaskService(taskRepo, userRepo)
